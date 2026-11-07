@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spectroscopy</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1020;--ink:#f1eefb;--mute:#aaa7c6;--card:rgba(255,255,255,.06);--line:rgba(255,255,255,.16)}
+@media(prefers-color-scheme:light){:root{--bg:#f6f3fc;--ink:#1b1740;--mute:#5b567d;--card:rgba(27,23,64,.06);--line:rgba(27,23,64,.18)}}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "DM Sans",system-ui,sans-serif;overflow-x:hidden}
+h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-weight:600;margin:.4em 0 .3em}
+h2{font-size:2.3rem}h3{font-size:1.7rem}h4{margin:1em 0 .2em;font-size:1rem}p{margin:.4em 0}.mute,small{color:var(--mute)}
+.view{max-width:1000px;margin:auto;padding:20px clamp(16px,4vw,40px) 60px}
+.back{background:none;border:1px solid var(--line);color:var(--ink);border-radius:20px;padding:6px 14px;font:inherit;cursor:pointer}
+.btn{--c:#8b5cf6;font:inherit;color:var(--ink);text-align:left;cursor:pointer;background:var(--card);border:1px solid var(--line);border-top:3px solid var(--c);border-radius:10px;padding:14px 16px;transition:transform .2s,background .2s}
+.btn:hover{transform:translateY(-3px);background:color-mix(in srgb,var(--c) 16%,transparent)}
+.btn:focus-visible,.opt:focus-visible,.back:focus-visible{outline:3px solid #8b5cf6;outline-offset:2px}
+.btn b{display:block;font-weight:500}.btn span{display:block;color:var(--mute);font-size:.85rem}.btn svg{width:26px;height:26px;stroke:var(--c);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;margin-bottom:8px}
+#home{position:relative;min-height:100svh;display:flex;flex-direction:column;padding:0 clamp(16px,4vw,48px) 28px;overflow:hidden}
+.cv{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hero{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-top:40px}
+h1{margin:0;font-weight:300;font-size:clamp(3rem,13vw,9rem);line-height:1.05;padding:0 .08em .1em;background:linear-gradient(90deg,#8b5cf6,#3b82f6,#14b8a6,#84cc16,#facc15,#f97316,#ef4444,#8b5cf6);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sw 8s linear infinite}
+@keyframes sw{to{background-position:-200% 0}}
+.sub{color:var(--mute);font-size:1.2rem;max-width:34ch}
+.nav{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:960px;width:100%;margin:0 auto}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:14px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin:16px 0}
+.an{width:100%;max-width:420px;display:block;margin:10px auto;color:var(--ink)}
+.em{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin-top:8px}
+.em div{background:color-mix(in srgb,var(--c) 28%,transparent);border-top:4px solid var(--c);border-radius:6px;padding:8px;display:flex;flex-direction:column}
+.rb{height:14px;border-radius:7px;margin:12px 0 2px;background:linear-gradient(90deg,#7c3aed,#3b82f6,#22c55e,#facc15,#f97316,#ef4444)}
+canvas.w{width:100%;height:90px;display:block}.gap{height:34vh}.hint{text-align:center;color:var(--mute);animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(6px)}}
+table{border-collapse:collapse;width:100%;font-size:.92rem}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--card)}.tw{overflow-x:auto}
+#mm{width:100%;height:auto}#mm .ln line{stroke-width:2;stroke-dasharray:4 6;animation:fl 1.2s linear infinite;opacity:.6}@keyframes fl{to{stroke-dashoffset:-20}}
+.nd{cursor:pointer}.nd:hover rect{fill-opacity:.5}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#8b5cf6,#14b8a6,#facc15,#ef4444);transition:width .5s}
+.opt{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin:8px 0;cursor:pointer;transition:.2s}
+.opt:hover:not(:disabled){border-color:#8b5cf6;transform:translateX(4px)}.opt.ok{border-color:#22c55e;background:rgba(34,197,94,.22);box-shadow:0 0 18px rgba(34,197,94,.45)}
+.opt.no{border-color:#ef4444;background:rgba(239,68,68,.2);animation:sk .4s}@keyframes sk{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.pp{position:fixed;width:9px;height:9px;border-radius:50%;pointer-events:none;animation:pop .8s forwards;z-index:9}@keyframes pop{to{transform:translate(var(--x),var(--y));opacity:0}}
+.cf{position:fixed;top:-16px;width:8px;height:14px;pointer-events:none;z-index:9;animation:fall linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+#ai{position:relative;min-height:100svh;overflow:hidden}#ai .view{position:relative}
+#log{min-height:260px}.m{max-width:85%;padding:10px 14px;border-radius:14px;margin:8px 0;background:var(--card);border:1px solid var(--line);backdrop-filter:blur(6px)}.m.u{margin-left:auto;background:color-mix(in srgb,#8b5cf6 30%,transparent)}
+.chip,.md{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:5px 12px;cursor:pointer;margin:3px}.md.on{background:#8b5cf6;color:#fff}
+form{display:flex;gap:8px;margin-top:10px}input{flex:1;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px}
+@media(max-width:720px){.nav{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
+@keyframes ga{to{--a:360deg}}
+.nav .btn{position:relative;isolation:isolate;border:0;border-radius:14px;background:transparent;padding:18px 16px}
+.nav .btn::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:2px;background:conic-gradient(from var(--a),transparent 0 50%,var(--c) 85%,#fff 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:ga 3s linear infinite}
+.nav .btn::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;background:conic-gradient(from var(--a),transparent 0 50%,var(--c) 85%,transparent 100%);filter:blur(14px);opacity:.4;transition:opacity .3s;animation:ga 3s linear infinite}
+.nav .btn:hover{background:color-mix(in srgb,var(--c) 10%,transparent);transform:translateY(-3px) scale(1.02)}.nav .btn:hover::after{opacity:.95}
+.cs{position:relative;height:230px;margin:10px 0 0;overflow:hidden}
+.btn.cn{position:absolute;left:50%;top:50%;width:150px;margin:-10px 0 0 -75px;text-align:center;transition:transform .6s cubic-bezier(.3,.8,.3,1),opacity .6s,box-shadow .4s;background:var(--bg)}
+.btn.cn.on{box-shadow:0 0 26px color-mix(in srgb,var(--c) 65%,transparent)}
+.ar{position:absolute;top:50%;margin-top:-20px;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font-size:1.3rem;z-index:50}
+.bk{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 54px 18px 18px;cursor:pointer;transition:transform .25s,box-shadow .25s}
+.bk:hover{transform:translateY(-4px);box-shadow:0 10px 26px color-mix(in srgb,var(--c) 30%,transparent)}.bk:focus-visible{outline:3px solid var(--c)}
+.bk b{display:block;font-weight:500}.bk span{color:var(--mute);font-size:.85rem}
+.rib{position:absolute;top:-1px;right:16px;width:26px;height:40px;border:0;padding:0;background:var(--line);clip-path:polygon(0 0,100% 0,100% 100%,50% 76%,0 100%);cursor:pointer;transition:height .35s cubic-bezier(.3,1.6,.5,1),background .3s}
+.bk:hover .rib{height:48px}.rib.on{background:var(--c);height:56px}.rib:focus-visible{outline:none;background:var(--ink)}
+.lm{background:#10130a;border-radius:16px;padding:26px;margin:18px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:18px}
+.lm div{border-left:2px solid #c6f432;padding-left:14px}
+.lm b{display:block;font:italic 600 3.2rem/1 "Cormorant Garamond",Georgia,serif;color:#c6f432}
+.lm span{display:block;margin-top:6px;color:#cfd6bd;font-size:.85rem;line-height:1.35}
+
+/* ===== v4: Scrolltide-inspired layers (Coffee hero motion, Particle Globe, Hover List) ===== */
+body::before{content:"";position:fixed;inset:-25%;z-index:-1;pointer-events:none;background:radial-gradient(35% 35% at 20% 25%,rgba(139,92,246,.34),transparent 70%),radial-gradient(30% 30% at 80% 20%,rgba(20,184,166,.28),transparent 70%),radial-gradient(35% 35% at 75% 80%,rgba(249,115,22,.26),transparent 70%),radial-gradient(30% 30% at 25% 85%,rgba(236,72,153,.26),transparent 70%);animation:drift 40s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate(4%,-3%) rotate(8deg) scale(1.1)}}
+@keyframes up{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+h2{display:inline-block;padding:0 .1em .08em 0;background:linear-gradient(90deg,#8b5cf6,#3b82f6,#14b8a6,#f59e0b,#ef4444,#ec4899);-webkit-background-clip:text;background-clip:text;color:transparent}
+.view>h2,.view>.card,.view>#cc>.card,.view .g3,#syl{animation:up 1.1s cubic-bezier(.2,.7,.2,1) both}
+.hero .sub{animation:up 1.4s .5s cubic-bezier(.2,.7,.2,1) both}
+.nav .btn{animation:up 1.2s cubic-bezier(.2,.7,.2,1) both}.nav .btn:nth-child(1){animation-delay:.7s}.nav .btn:nth-child(2){animation-delay:.85s}.nav .btn:nth-child(3){animation-delay:1s}.nav .btn:nth-child(4){animation-delay:1.15s}
+.card:not([style])::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#8b5cf6,#3b82f6,#14b8a6,#facc15,#f97316,#ef4444)}
+.card{position:relative;overflow:hidden}
+.steam{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.steam i{position:absolute;bottom:-25%;width:190px;height:380px;border-radius:50%;filter:blur(40px);opacity:0;animation:rise 18s ease-in-out infinite}
+.steam i:nth-child(1){left:6%;background:#f97316}.steam i:nth-child(2){left:24%;background:#ec4899;animation-delay:4s}.steam i:nth-child(3){left:45%;background:#facc15;animation-delay:8s}.steam i:nth-child(4){left:66%;background:#14b8a6;animation-delay:2s}.steam i:nth-child(5){left:84%;background:#8b5cf6;animation-delay:6s}
+@keyframes rise{0%{transform:translateY(0) scaleX(.8);opacity:0}25%{opacity:.34}100%{transform:translateY(-125vh) scaleX(1.5);opacity:0}}
+.hl{margin:14px 0}
+.hr{--c:#8b5cf6;position:relative;display:grid;grid-template-columns:48px 1fr auto;gap:2px 14px;align-items:center;padding:14px 16px;border-top:1px solid var(--line);cursor:pointer;overflow:hidden;transition:padding .4s}
+.hr:last-child{border-bottom:1px solid var(--line)}
+.hr::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 40%,transparent),color-mix(in srgb,var(--c) 6%,transparent));transform:scaleX(0);transform-origin:left;transition:transform .55s cubic-bezier(.2,.8,.2,1)}
+.hr>*{position:relative}
+.hr:hover::before,.hr:focus-visible::before,.hr.open::before{transform:scaleX(1)}
+.hr:hover,.hr:focus-visible,.hr.open{padding-left:28px;outline:none}
+.hn{font:italic 600 1.7rem "Cormorant Garamond",Georgia,serif;color:var(--c)}
+.hr b{font-weight:500}
+.hr em{font-style:normal;color:var(--mute);font-size:.82rem;text-align:right}
+.hr p{grid-column:2/4;margin:0;max-height:0;opacity:0;overflow:hidden;font-size:.92rem;transition:max-height .5s ease,opacity .4s,margin .4s}
+.hr:hover p,.hr:focus-visible p,.hr.open p{max-height:160px;opacity:1;margin-top:6px}
+#syl{margin:22px 0 4px}#syl h3{margin:0 0 2px}
+@media(max-width:560px){.hr{grid-template-columns:40px 1fr}.hr em{display:none}.hr p{grid-column:1/-1}}
+</style></head><body>
+
+<section id="home">
+<canvas class="cv" id="cw" style="opacity:.5"></canvas><div class="steam"><i></i><i></i><i></i><i></i><i></i></div><canvas class="cv" id="gl" style="opacity:.8"></canvas>
+<header class="hero"><h1>Spectroscopy</h1><p class="sub">How light meets molecules, and what it tells us about them.</p></header>
+<nav class="nav">
+<button class="btn" style="--c:#8b5cf6" data-go="concepts"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><b>Concepts</b><span>About, types, selection rules</span></button>
+<button class="btn" style="--c:#14b8a6" data-go="mind"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="4.5" cy="5.5" r="2"/><circle cx="19.5" cy="5.5" r="2"/><circle cx="4.5" cy="18.5" r="2"/><circle cx="19.5" cy="18.5" r="2"/><path d="M6 7l4 3.5M18 7l-4 3.5M6 17l4-3.5M18 17l-4-3.5"/></svg><b>Mind maps</b><span>See how it all connects</span></button>
+<button class="btn" style="--c:#f59e0b" data-go="quiz"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg><b>Quiz</b><span>20 questions</span></button>
+<button class="btn" style="--c:#ef4444" data-go="ai"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg><b>AI mode</b><span>Ask anything</span></button>
+</nav></section>
+
+<section id="concepts" class="view" hidden>
+<button class="back" data-go="home">← Home</button><h2>Concepts</h2>
+<div class="g3">
+<div class="bk" role="button" tabindex="0" style="--c:#8b5cf6" data-sub="about"><button class="rib" data-bk="about" aria-label="Bookmark About spectroscopy" aria-pressed="false"></button><b>1. About spectroscopy</b><span>What it is and how it works</span></div>
+<div class="bk" role="button" tabindex="0" style="--c:#14b8a6" data-sub="types"><button class="rib" data-bk="types" aria-label="Bookmark Types of spectroscopy" aria-pressed="false"></button><b>2. Types of spectroscopy</b><span>Spectrum, then each technique</span></div>
+<div class="bk" role="button" tabindex="0" style="--c:#f59e0b" data-sub="rules"><button class="rib" data-bk="rules" aria-label="Bookmark Selection rules" aria-pressed="false"></button><b>3. Selection rules</b><span>Comparison table</span></div>
+</div><p class="mute" style="margin-top:-4px">Tap a ribbon to bookmark a topic.</p><div id="syl"></div><div id="cc"></div></section>
+
+<section id="mind" class="view" hidden>
+<button class="back" data-go="home">← Home</button><h2>Mind map</h2><p class="mute">Tap any bubble to read about it.</p>
+<svg id="mm" viewBox="0 0 700 460"></svg><div id="mi" class="card"><p class="mute">Nothing selected yet.</p></div></section>
+
+<section id="quiz" class="view" hidden>
+<button class="back" data-go="home">← Home</button><h2>Quiz</h2><div id="qz" class="card"></div></section>
+
+<section id="ai" hidden><canvas class="cv" id="ab" style="opacity:.45"></canvas>
+<div class="view"><button class="back" data-go="home">← Home</button><h2>AI mode</h2>
+<p class="mute">A built-in spectroscopy tutor that works offline. Pick how you like answers, then ask.</p>
+<div><button class="md on" data-m="0">Brief</button><button class="md" data-m="1">Detailed</button></div>
+<div id="log"></div><div id="chips"></div>
+<form id="af"><input id="ai-in" placeholder="Ask e.g. why is H₂ not IR active?" autocomplete="off"><button class="btn" style="--c:#ef4444">Ask</button></form></div></section>
+
+<script>
+const $=i=>document.getElementById(i);
+function waves(cv,n,ch){const x=cv.getContext('2d'),rm=matchMedia('(prefers-reduced-motion:reduce)').matches;let t=0;const k0=cv._k=Symbol();(function f(){if(cv._k!==k0)return;const w=cv.width=cv.clientWidth,h=cv.height=cv.clientHeight;x.clearRect(0,0,w,h);for(let k=0;k<n;k++){x.beginPath();x.strokeStyle='hsla('+(k*65+250)+',80%,62%,.6)';x.lineWidth=2;for(let i=0;i<=w;i+=4){const fr=(.012+.01*k)*(1+(ch?i/w*3:0)),y=h/2+Math.sin(i*fr+t*(1+k*.4))*h*(.2-k*.02);i?x.lineTo(i,y):x.moveTo(i,y)}x.stroke()}t+=rm?0:.03;if(cv.isConnected&&!rm)requestAnimationFrame(f)})()}
+function show(id){document.querySelectorAll('section').forEach(s=>s.hidden=s.id!=id);scrollTo(0,0);if(id=='home'||id=='ai')waves($(id=='ai'?'ab':'cw'),4);if(id=='home')globe($('gl'));if(id=='mind'&&!$('mm').innerHTML)mind();if(id=='quiz')quiz();if(id=='ai'&&!$('log').innerHTML)say('Hi! Ask me about any spectroscopy topic, or tap a suggestion.',0)}
+let cur=0;
+function ring(i){const n=T.length,w=$('cs').clientWidth,R=Math.max(70,Math.min(250,w/2-85));cur=(i+n)%n;document.querySelectorAll('.cn').forEach((e,k)=>{const d=((k-cur+n+2)%n)-2,a=d*2*Math.PI/n,z=(Math.cos(a)+1)/2;e.style.transform='translate('+Math.sin(a)*R+'px,'+(Math.cos(a)-1)*45+'px) scale('+(.62+.38*z)+')';e.style.opacity=.3+.7*z;e.style.zIndex=Math.round(z*10);e.classList.toggle('on',k==cur)});tdet(cur,1)}
+addEventListener('resize',()=>{if($('cs'))ring(cur)});
+document.addEventListener('keydown',e=>{if((e.key=='Enter'||e.key==' ')&&e.target.classList.contains('bk')){e.preventDefault();e.target.click()}});
+document.addEventListener('click',e=>{const rb=e.target.closest('.rib');if(rb){rb.classList.toggle('on');rb.setAttribute('aria-pressed',rb.classList.contains('on'));try{localStorage.setItem('sp-bk',JSON.stringify([...document.querySelectorAll('.rib.on')].map(r=>r.dataset.bk)))}catch(x){}return}
+const g=e.target.closest('[data-go]');if(g)show(g.dataset.go);const s=e.target.closest('[data-sub]');if(s)sub(s.dataset.sub);const t=e.target.closest('[data-t]');if(t)ring(+t.dataset.t);const r=e.target.closest('[data-r]');if(r)ring(cur+ +r.dataset.r)});
+function lime(){return '<div class="lm">'+[[7,'','regions of the electromagnetic spectrum'],[5,'','core techniques to explore'],[20,'','quiz questions to test yourself'],[1000,'×','fluorescence can be up to this much more sensitive than absorption']].map(m=>'<div><b data-n="'+m[0]+'" data-s="'+m[1]+'">0'+m[1]+'</b><span>'+m[2]+'</span></div>').join('')+'</div>'}
+function counts(){const rm=matchMedia('(prefers-reduced-motion:reduce)').matches,io=new IntersectionObserver(es=>es.forEach(x=>{if(!x.isIntersecting)return;io.unobserve(x.target);const b=x.target,n=+b.dataset.n,t0=performance.now();(function f(t){const p=rm?1:Math.min(1,(t-t0)/1200);b.textContent=Math.round(n*(1-Math.pow(1-p,3)))+b.dataset.s;if(p<1)requestAnimationFrame(f)})(t0)}));document.querySelectorAll('.lm b').forEach(b=>io.observe(b))}
+
+/* animations */
+const L=ys=>'<g stroke="currentColor" stroke-width="2" opacity=".55">'+ys.map(y=>'<line x1="50" y1="'+y+'" x2="170" y2="'+y+'"/>').join('')+'</g>';
+const P=(c,y,a,b,t0,t1)=>'<circle r="6" cy="'+y+'" fill="'+c+'"><animate attributeName="cx" values="'+a+';'+a+';'+b+';'+b+'" keyTimes="0;'+t0+';'+t1+';1" dur="4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;'+t0+';'+t1+';'+(t1+.01)+';1" dur="4s" repeatCount="indefinite"/></circle>';
+const E=(v,k)=>'<circle cx="110" cy="105" r="8" fill="#8b5cf6"><animateTransform attributeName="transform" type="translate" values="'+v+'" keyTimes="'+k+'" dur="4s" repeatCount="indefinite"/></circle>';
+const an=(a,v,d)=>'<animate attributeName="'+a+'" values="'+v+'" dur="'+d+'" repeatCount="indefinite"/>';
+const AN={uv:L([105,25])+P('#facc15',105,290,122,.01,.3)+E('0 0;0 0;0 -80;0 -80;0 0;0 0','0;.3;.38;.75;.85;1'),
+fl:L([105,65,25])+P('#60a5fa',105,290,122,.01,.25)+E('0 0;0 0;0 -80;0 -40;0 0;0 0','0;.25;.32;.5;.6;1')+P('#22c55e',105,122,290,.6,.95),
+ir:'<line y1="65" y2="65" stroke="currentColor" stroke-width="3">'+an('x1','113;126;113','1s')+an('x2','187;174;187','1s')+'</line><circle cy="65" r="18" fill="#14b8a6">'+an('cx','95;108;95','1s')+'</circle><circle cy="65" r="18" fill="#14b8a6">'+an('cx','205;192;205','1s')+'</circle>'+P('#ef4444',65,0,70,.01,.3),
+ra:'<circle cx="150" cy="65" r="20" fill="#f59e0b">'+an('r','20;25;20','1.2s')+'</circle>'+P('#facc15',65,0,125,.01,.4)+P('#f59e0b',30,175,295,.4,.8)+P('#ef4444',100,175,295,.4,.8),
+ro:'<g><animateTransform attributeName="transform" type="rotate" values="0 150 65;360 150 65" dur="3s" repeatCount="indefinite"/><line x1="110" y1="65" x2="190" y2="65" stroke="currentColor" stroke-width="3"/><circle cx="110" cy="65" r="18" fill="#f59e0b"/><circle cx="190" cy="65" r="12" fill="#14b8a6"/></g>',
+sf:'<g fill="#3b82f6" opacity=".7">'+[40,80,120,160,200,240].map(x=>'<circle cx="'+x+'" cy="108" r="12"/>').join('')+'</g>'+P('#facc15',88,0,120,.01,.4)+P('#22c55e',50,120,295,.4,.8),
+nm:'<line x1="150" y1="115" x2="150" y2="8" stroke="currentColor" opacity=".3" stroke-width="2"/><line x1="150" y1="115" stroke="#14b8a6" stroke-width="4">'+an('x2','185;150;115;150;185','2s')+an('y2','50;62;50;38;50','2s')+'</line><circle r="7" fill="#14b8a6">'+an('cx','185;150;115;150;185','2s')+an('cy','50;62;50;38;50','2s')+'</circle>'};
+
+/* data */
+const T=[
+{n:'Fluorescence',c:'#3b82f6',a:'fl',r:'Emission, longer λ',t:'A molecule absorbs a UV or visible photon (S₀→S₁), loses a little energy as heat by vibrational relaxation, then returns to S₀ by emitting a photon of longer wavelength (the Stokes shift). The transition is spin-allowed (ΔS = 0), so emission takes only nanoseconds. Rigid, conjugated molecules fluoresce best. Quantum yield Φ = photons emitted ÷ photons absorbed.',h:'The sample is excited at one wavelength (λex) and emission is read at another (λem) at 90° to the beam, so the exciting light does not reach the detector. At low concentration the intensity is proportional to concentration, and the method is often 100 to 1000 times more sensitive than absorption. Quenchers and high concentration lower the signal.',e:'In medicine: riboflavin and quinine assays, thiamine measured as fluorescent thiochrome, fluorescein angiography of retinal vessels, 5-ALA guided removal of brain tumours, fluorescent antibody tags, DNA stains such as DAPI, and GFP labelling of cells.'},
+{n:'Vibrational',c:'#14b8a6',a:'ir',r:'IR: 4000–400 cm⁻¹',t:'A diatomic molecule vibrates like a spring. In the harmonic model E = (v + ½)hν and ν̃ = (1/2πc)√(k/μ), so stiffer bonds and lighter atoms vibrate at higher wavenumber. Real bonds are anharmonic, so levels crowd together and weak overtones appear. IR needs the dipole moment to change, so HCl and CO absorb but H₂ and N₂ do not.',h:'IR light passes through the gas and the dip in transmittance is read at the fundamental (v = 0→1). Gas-phase spectra show rotational fine structure: a P branch (ΔJ = −1) and an R branch (ΔJ = +1) with a gap at the band centre. The band position gives the force constant k.',e:'HCl fundamental near 2886 cm⁻¹ (doublets from ³⁵Cl and ³⁷Cl); CO near 2143 cm⁻¹ with k about 1860 N/m. In medicine, CO in exhaled breath and NO in breath tests are measured by IR, and CO₂ by capnography during anaesthesia.'},
+{n:'Rotational',c:'#f59e0b',a:'ro',r:'Microwave, far-IR',t:'Treated as a rigid rotor, a diatomic has energy E = BJ(J+1), with B = h/(8π²Ic) and I = μr². Only molecules with a permanent dipole absorb microwaves, with ΔJ = ±1, so neighbouring lines are 2B apart. Rotational Raman needs an anisotropic polarizability, with ΔJ = 0, ±2 and lines 4B apart, so even H₂ and N₂ show it.',h:'Microwave absorption lines are measured for a gas. The spacing 2B gives the moment of inertia I, and then the bond length r = √(I/μ). Line intensity rises and then falls with J because of the Boltzmann population and the (2J+1) degeneracy.',e:'CO has B ≈ 1.93 cm⁻¹ and bond length 112.8 pm; HCl has B ≈ 10.6 cm⁻¹. Isotopic substitution gives very accurate bond lengths, and microwave lines identify trace molecules in gas mixtures.'},
+{n:'MRI',c:'#ec4899',a:'nm',r:'Radio waves, MHz',t:'Hydrogen nuclei (protons) in body water and fat have spin ½ and act as tiny magnets. In a strong field B₀ (1.5 to 3 T) they split into two levels and absorb a radio pulse at the Larmor frequency ν = γB₀/2π, about 63.9 MHz for ¹H at 1.5 T. After the pulse they relax back, with times T₁ (recovery) and T₂ (decay) that differ from tissue to tissue.',h:'Magnetic field gradients make the frequency depend on position, so each slice and voxel can be located, and a Fourier transform turns the signals into an image. Short TR and TE give T₁-weighted images (fat bright); long TR and TE give T₂-weighted images (fluid bright). Gadolinium contrast shortens T₁.',e:'Brain and spinal cord imaging, joints and soft tissue, tumour detection, and functional MRI (fMRI), which follows blood oxygen. No ionizing radiation is used, but some pacemakers and metal implants can be unsafe in the magnet.'},
+{n:'Surface analysis',c:'#22c55e',a:'sf',r:'Top 1–10 nm',t:'Surface techniques probe only the outermost layers, where drug release, wetting, adhesion and biocompatibility are decided. XPS (ESCA) shines X-rays and measures the kinetic energy of the ejected electrons, giving binding energy and so the element and oxidation state in the top 1 to 10 nm. SEM scans an electron beam to image topography, and AFM drags a fine tip over the surface to map height at nanometre scale.',h:'XPS: binding energy = hν − kinetic energy − work function. SEM: secondary electrons form the image, and EDX adds an elemental map. AFM: a laser reads cantilever deflection to build a 3D profile. BET: nitrogen adsorption gives the specific surface area. Contact angle gives wettability.',e:'Size and shape of nanoparticle and liposomal drugs, coatings on tablets and stents, surface chemistry of implants, powder surface area that controls dissolution rate (BET), and cell adhesion on biomaterials.'}];
+const EM=[['Radio','> 1 m','NMR, MRI','#64748b'],['Microwave','1 mm – 1 m','Rotational','#0ea5e9'],['Infrared','700 nm – 1 mm','Vibrational','#ef4444'],['Visible','400 – 700 nm','Fluorescence','#22c55e'],['Ultraviolet','10 – 400 nm','Excitation','#8b5cf6'],['X-ray','0.01 – 10 nm','XPS, XRD','#06b6d4'],['Gamma','< 0.01 nm','Gamma imaging','#ec4899']];
+const R=[['Rotational (microwave)','Permanent dipole moment; ΔJ = ±1','HCl and CO are active; H₂, N₂ and CO₂ are not. Lines are 2B apart.'],
+['Vibrational (IR)','Dipole moment must change; Δv = ±1 (harmonic), weak overtones (anharmonic)','HCl and CO absorb; H₂ and N₂ are silent. The fundamental is v = 0→1.'],
+['Rovibrational (gas-phase IR)','Δv = ±1 with ΔJ = ±1 (closed-shell diatomics)','P branch (ΔJ = −1) and R branch (ΔJ = +1) with a gap at the band centre, as in HCl.'],
+['Raman (rotational)','Anisotropic polarizability; ΔJ = 0, ±2','H₂ and N₂ are active; lines are 4B apart. Spherical atoms are not.'],
+['Raman (vibrational)','Polarizability must change; Δv = ±1','The N₂ and H₂ stretches are Raman active but IR silent.'],
+['Electronic (UV-Visible)','ΔS = 0 (spin); Laporte g↔u; Franck–Condon overlap','π→π* is strong (ε 10³–10⁵). n→π* is weak (ε below 100) because the orbitals overlap poorly.'],
+['Fluorescence / phosphorescence','Fluorescence: ΔS = 0, fast. Phosphorescence: spin-forbidden, slow','Quinine and fluorescein fluoresce in nanoseconds; glow-in-the-dark materials phosphoresce for seconds.'],
+['NMR / MRI','Nuclear spin I ≠ 0; Δm = ±1; resonance at ν = γB₀/2π','¹H (used in MRI), ¹³C, ¹⁹F and ³¹P are active; ¹²C and ¹⁶O are not.']];
+const Q=[['What is the energy of a photon?',['E = hν','E = mv²','E = qV','E = kT'],0,'Photon energy equals Planck’s constant times frequency.'],
+['In a molecule, which energy spacing is the largest?',['Rotational','Vibrational','Electronic','Nuclear spin'],2,'E(electronic) ≫ E(vibrational) ≫ E(rotational) ≫ E(nuclear spin).'],
+['Fluorescence emission appears at…',['Shorter wavelength','Longer wavelength','Same wavelength','Random wavelength'],1,'Some energy is lost as heat first, so the emitted photon has less energy.'],
+['The gap between absorption and emission wavelengths is the…',['Stokes shift','Zeeman effect','Raman shift','Chemical shift'],0,'The Stokes shift comes from vibrational relaxation in the excited state.'],
+['A typical fluorescence lifetime is in the order of…',['Femtoseconds','Nanoseconds','Seconds','Hours'],1,'Fluorescence is spin-allowed (ΔS = 0), so it is fast.'],
+['Which fluorescence method images retinal blood vessels?',['Fluorescein angiography','X-ray crystallography','Atomic absorption','Flame photometry'],0,'Injected fluorescein glows under blue light and outlines the vessels.'],
+['Quantum yield of fluorescence is…',['Photons emitted ÷ photons absorbed','Photons absorbed ÷ photons emitted','Energy ÷ mass','Absorbance ÷ concentration'],0,'It measures how efficiently absorbed photons become fluorescence.'],
+['Which diatomic molecule is IR-inactive?',['HCl','CO','N₂','NO'],2,'N₂ is homonuclear: stretching creates no dipole change.'],
+['In the harmonic model, the vibrational selection rule is Δv =',['0','±1','±2','±3'],1,'Overtones (Δv = ±2) appear only weakly because of anharmonicity.'],
+['The vibrational wavenumber of a diatomic rises when…',['Force constant rises','Reduced mass rises','The bond is weaker','Temperature falls'],0,'ν̃ = (1/2πc)√(k/μ): a stiffer bond or lighter atoms give a higher value.'],
+['The rotational selection rule for microwave absorption is ΔJ =',['0','±1','±2','±3'],1,'A photon carries one unit of angular momentum.'],
+['Adjacent lines in a pure rotational spectrum are separated by…',['B','2B','4B','B/2'],1,'Transitions J→J+1 occur at 2B(J+1), so spacing is 2B.'],
+['Which molecule shows a pure rotational microwave spectrum?',['H₂','N₂','CO','O₂'],2,'Only molecules with a permanent dipole moment do. CO has one.'],
+['The rotational Raman selection rule is…',['ΔJ = ±1','ΔJ = 0, ±2','ΔJ = ±3','No rule'],1,'It needs anisotropic polarizability, and the spacing is 4B.'],
+['In the rovibrational spectrum of HCl, the band centre is missing because…',['ΔJ = 0 is forbidden','Δv = 0 is forbidden','HCl has no dipole','Raman scatter hides it'],0,'This leaves a gap between the P and R branches.'],
+['MRI mainly detects signals from nuclei of…',['Carbon-12','Hydrogen (¹H)','Oxygen-16','Sulfur-32'],1,'Protons in water and fat are abundant and have spin ½.'],
+['The Larmor frequency is proportional to…',['Magnetic field strength B₀','Sample mass','Temperature','Pressure'],0,'ν = γB₀/2π, so a stronger magnet needs a higher radio frequency.'],
+['In a T₂-weighted MRI image, fluid appears…',['Dark','Bright','Invisible','Same as bone'],1,'Water-rich tissue keeps its signal longer, so it looks bright.'],
+['Which technique gives element and oxidation state of the top few nm?',['IR','NMR','XPS','UV-Vis'],2,'XPS measures the binding energy of electrons ejected by X-rays.'],
+['AFM images a surface by…',['Radio waves','Microwave absorption','Fluorescence of the sample','Scanning a fine tip across it'],3,'The cantilever deflection is read by a laser and gives a height map.']];
+const K=[[['fluoresc','phosphoresc','emission','stokes','jablonski','quantum yield','quench','angiograph'],'Fluorescence is light re-emitted at a longer wavelength after absorption; phosphorescence is the slow, spin-forbidden version.','After absorption (S₀→S₁) the molecule relaxes without radiation to the lowest excited level, then emits (S₁→S₀) in nanoseconds. The wavelength gap is the Stokes shift. Phosphorescence comes from the triplet state and lasts longer. In medicine it is used for riboflavin and thiamine assays, fluorescein angiography, tumour surgery with 5-ALA, and fluorescent labels in cells.'],
+[['vibration','infrared','ir ','wavenumber','force constant','anharmonic','overtone','harmonic','stretch'],'Vibrational spectra of diatomics follow ν̃ = (1/2πc)√(k/μ); IR needs a dipole change and Δv = ±1.','The harmonic oscillator has E = (v + ½)hν. Real bonds are anharmonic, so levels converge and overtones appear weakly. HCl absorbs near 2886 cm⁻¹ and CO near 2143 cm⁻¹; H₂ and N₂ are IR-silent. The band position gives the force constant k.'],
+[['rotation','microwave','rigid rotor','moment of inertia','bond length','rotational constant'],'Rotation of a diatomic: E = BJ(J+1), ΔJ = ±1, lines 2B apart. A permanent dipole is needed.','B = h/(8π²Ic) with I = μr². Measuring the spacing 2B gives I and then the bond length. CO has B ≈ 1.93 cm⁻¹ (r = 112.8 pm). Intensities follow the Boltzmann population times (2J+1).'],
+[['rovibrational','p branch','r branch','branch','fine structure','band origin'],'In gas-phase IR, vibration and rotation combine: the R branch (ΔJ = +1), the P branch (ΔJ = −1) and a gap at the centre.','For closed-shell diatomics such as HCl and CO the ΔJ = 0 line is forbidden, which leaves the gap. Line spacing is about 2B. HCl lines appear as doublets because of ³⁵Cl and ³⁷Cl isotopes.'],
+[['mri','imaging','magnetic resonance','nmr','larmor','t1 ','t2 ','gradient','contrast','gadolinium','proton'],'MRI maps ¹H nuclei in a strong magnetic field using radio pulses and field gradients; T₁ and T₂ give tissue contrast.','Protons split into two levels in B₀ and resonate at ν = γB₀/2π (63.9 MHz at 1.5 T). Gradients encode position and a Fourier transform builds the image. T₁-weighted: fat bright. T₂-weighted: fluid bright. Gadolinium shortens T₁. fMRI follows blood oxygen. No ionizing radiation is used, but metal implants need checking.'],
+[['surface','xps','sem ','afm ','bet ','esca','electron microscop','atomic force','contact angle','characteriz'],'Surface characterization includes XPS (elements and oxidation states), SEM (topography), AFM (height maps) and BET (surface area).','XPS: binding energy = hν − KE − φ, probing the top 1 to 10 nm. SEM images with secondary electrons, and EDX maps elements. AFM scans a tip for 3D nanometre height. BET uses N₂ adsorption for specific surface area, which controls dissolution. Contact angle gives wettability.'],
+[['dipole','polarizab','mutual exclusion','centrosymmetric'],'IR needs a changing dipole, Raman a changing polarizability. In centrosymmetric molecules, no mode is both.','H₂ and N₂ have no dipole, so they are IR-silent, but their polarizability changes on stretching, so they are Raman active. HCl and CO are active in both. For CO₂, the asymmetric stretch is IR active and the symmetric stretch is Raman active.'],
+[['selection rule','forbidden','allowed','laporte','gross','specific rule'],'Selection rules say which transitions are allowed: rotation ΔJ = ±1, vibration Δv = ±1, UV-Vis ΔS = 0, NMR I ≠ 0.','The gross rule tells whether a technique can show a molecule at all (dipole, polarizability, spin). The specific rule gives allowed jumps (ΔJ = ±1, Δv = ±1, Δm = ±1; Raman ΔJ = 0, ±2). Forbidden transitions can still appear weakly.'],
+[['raman'],'Raman measures the small energy shift of scattered laser light; it needs a polarizability change.','Stokes lines lose energy, anti-Stokes gain it. Vibrational Raman has Δv = ±1; rotational Raman has ΔJ = 0, ±2 with 4B spacing. H₂ and N₂ are Raman-active even though IR-silent.'],
+[['beer','lambert','absorbance','concentration','absorptivity'],'A = εbc: absorbance is proportional to concentration.','A = log(I₀/I). ε is the molar absorptivity, b the path length in cm, c the concentration in mol/L. It is linear only at low concentrations.'],
+[['principle','electromagnetic','wavelength','region','photon','energy level','boltzmann','born'],'Energy rises as wavelength falls: radio → microwave → IR → visible → UV → X-ray → gamma.','E = hν = hc/λ. Radio flips spins (NMR, MRI), microwaves rotate molecules, IR vibrates bonds, UV-Vis moves electrons, X-rays eject inner electrons. Energy levels follow E(electronic) ≫ E(vibrational) ≫ E(rotational), and the Boltzmann law sets how populated each level is.'],
+[['medicine','medical','clinical','pharma','drug','application','uses','diagnos'],'In medicine: fluorescence for assays and imaging, MRI for soft tissue, IR for breath gases, surface methods for nanoparticles and implants.','Fluorescence: riboflavin and thiamine assays, angiography, tumour-guided surgery. MRI: brain, joints and tumours with no radiation. IR: CO and NO in breath. Surface methods (SEM, AFM, XPS, BET): drug nanoparticles, stent coatings and implants.'],
+[['types','kinds','classification','techniques'],'Syllabus techniques: fluorescence, vibrational and rotational spectroscopy of diatomics, MRI and surface characterization.','They differ by what changes: electrons (fluorescence), vibrations (IR), rotations (microwave), nuclear spins (MRI) and surface electrons or atoms (XPS, SEM, AFM).'],
+[['what is spectroscopy','define','introduction','spectroscopy'],'Spectroscopy studies how matter absorbs, emits or scatters light to learn its structure and amount.','Atoms and molecules have fixed energy levels. A photon is absorbed only when hν equals a gap, so the pattern of wavelengths (the spectrum) acts as a fingerprint. Each light region probes spins, rotations, vibrations or electrons.']];
+
+/* concepts */
+function sub(s){const c=$('cc');
+if(s=='about')c.innerHTML='<div class="card"><h3>What is spectroscopy?</h3><p>Spectroscopy studies how matter <b>absorbs, emits or scatters</b> electromagnetic radiation. Atoms and molecules only exist at fixed energy levels, so they take in a photon only when its energy matches the gap: <b>ΔE = hν = hc/λ</b>.</p><svg class="an" viewBox="0 0 300 130">'+AN.uv+'</svg><p class="mute" style="text-align:center">A yellow photon arrives, the electron jumps up, then falls back.</p><h4>How it works in three steps</h4><p>1. Light of known wavelengths hits the sample. 2. The sample absorbs only certain wavelengths. 3. The detector plots absorbed (or emitted) light against wavelength, giving a spectrum that identifies and measures the substance.</p><svg class="an" viewBox="0 0 300 130"><polygon points="120,100 150,25 180,100" fill="none" stroke="currentColor" stroke-width="2"/><line x1="10" y1="75" x2="138" y2="64" stroke="currentColor" stroke-width="3"/>'+['#ef4444','#f97316','#facc15','#22c55e','#3b82f6','#6366f1','#8b5cf6'].map((c,i)=>'<line x1="162" y1="62" x2="292" y2="'+(25+i*14)+'" stroke="'+c+'" stroke-width="3">'+an('opacity','.3;1;.3','3s').replace('repeat','begin="'+i*.3+'s" repeat')+'</line>').join('')+'</svg><p class="mute" style="text-align:center">A prism splits white light into its wavelengths, the first spectrometer.</p><h4>Key ideas</h4><p><b>Energy ladder:</b> electronic gaps ≫ vibrational gaps ≫ rotational gaps, so UV-Vis, IR and microwaves probe them in turn. <b>Beer–Lambert law:</b> A = εbc, absorbance is proportional to concentration. <b>Energy and wavelength:</b> shorter wavelength means higher energy. <b>Spectrum:</b> a graph of response versus wavelength, wavenumber or frequency.</p>'+lime()+'<h4>Uses in medicine</h4><p>Fluorescence assays and imaging, MRI of soft tissue, IR analysis of breath gases, and surface characterization of nanoparticles, coatings and implants.</p></div>';
+if(s=='types'){c.innerHTML='<div class="card"><h3>The electromagnetic spectrum</h3><p class="mute">Wavelength shortens and energy rises from left to right. Each region disturbs a different part of a molecule.</p><canvas class="w" id="ch"></canvas><div class="em">'+EM.map(r=>'<div style="--c:'+r[3]+'"><b>'+r[0]+'</b><small>'+r[1]+'</small><small>'+r[2]+'</small></div>').join('')+'</div><div class="rb"></div><small>Visible light: violet 400 nm to red 700 nm</small><p class="hint">Scroll down for the types of spectroscopy ↓</p><div class="gap"></div><h3>Types of spectroscopy</h3><p class="mute">Turn the ring with the arrows or tap a card.</p><div class="cs" id="cs"><button class="ar" data-r="-1" style="left:0" aria-label="Previous">‹</button><button class="ar" data-r="1" style="right:0" aria-label="Next">›</button>'+T.map((t,i)=>'<button class="btn cn" data-t="'+i+'" style="--c:'+t.c+'"><b>'+t.n+'</b><span>'+t.r+'</span></button>').join('')+'</div><div id="td"></div></div>';waves($('ch'),3,1);ring(0)}
+if(s=='rules')c.innerHTML='<div class="card"><h3>Selection rules</h3><p>A selection rule says which transitions are <b>allowed</b>. The <b>gross rule</b> decides if a molecule can show a technique at all; the <b>specific rule</b> gives the allowed jumps. Forbidden transitions can still appear weakly.</p><p class="mute">Hover or tap a row to read the meaning and an example.</p>'+hl(R)+'</div>';
+if(s=='about')counts();c.scrollIntoView({behavior:'smooth'})}
+function tdet(i,q){const t=T[i];$('td').innerHTML='<div class="card" style="border-top:3px solid '+t.c+'"><h3>'+t.n+'</h3><svg class="an" viewBox="0 0 300 130">'+AN[t.a]+'</svg><h4>What happens</h4><p>'+t.t+'</p><h4>How it is measured</h4><p>'+t.h+'</p><h4>Examples</h4><p>'+t.e+'</p><p class="mute">Key range: '+t.r+'</p></div>';if(!q)$('td').scrollIntoView({behavior:'smooth'})}
+
+/* mind map */
+function mind(){const M=[['Basics',-2.7,'#14b8a6',.9,[['hν = ΔE','Photon energy equals frequency times Planck’s constant. It is absorbed only if it matches an energy gap.'],['Energy levels','Electronic gaps are much larger than vibrational gaps, which are larger than rotational gaps.'],['Beer–Lambert','A = εbc: absorbance is proportional to concentration, the basis of assays.']],'The foundation: light comes in packets (photons), and matter only absorbs those that match its energy gaps.'],
+['Types',-.35,'#8b5cf6',1.5,[['Fluorescence','Light re-emitted at a longer wavelength within nanoseconds; very sensitive; used for assays, angiography and cell labels.'],['Vibrational','Diatomic bond vibration, ν̃ = (1/2πc)√(k/μ); IR needs a dipole change; Δv = ±1.'],['Rotational','Rigid rotor E = BJ(J+1); microwave lines 2B apart; gives bond length.'],['MRI','¹H spins in a strong field and radio pulses give soft-tissue images using T₁ and T₂.'],['Surface','XPS, SEM, AFM and BET probe the outer nanometres of a material.']],'The syllabus techniques: each probes a different motion or layer of the sample.'],
+['Selection rules',1.9,'#f59e0b',1,[['Dipole change','IR and microwave: the dipole moment must change (Δv = ±1, ΔJ = ±1).'],['Polarizability','Raman: polarizability must change. Vibration Δv = ±1; rotation ΔJ = 0, ±2.'],['Spin and parity','UV-Vis and fluorescence: ΔS = 0 and Laporte g↔u. NMR and MRI: I ≠ 0, Δm = ±1.']],'Selection rules decide which transitions are allowed, so which peaks appear.']];
+const cx=350,cy=230,rx=270,ry=190,N=[];let l='<g class="ln">',n='';
+M.forEach(b=>{const bx=cx+rx*.5*Math.cos(b[1]),by=cy+ry*.5*Math.sin(b[1]);l+='<line x1="'+cx+'" y1="'+cy+'" x2="'+bx+'" y2="'+by+'" stroke="'+b[2]+'"/>';
+b[4].forEach((c,i,a)=>{const th=b[1]+(i/(a.length-1)-.5)*b[3],x=cx+rx*Math.cos(th),y=cy+ry*Math.sin(th);l+='<line x1="'+bx+'" y1="'+by+'" x2="'+x+'" y2="'+y+'" stroke="'+b[2]+'"/>';N.push([x,y,c[0],b[2],c[1],112,30])});N.push([bx,by,b[0],b[2],b[5],120,36])});
+N.push([cx,cy,'Spectroscopy','#ec4899','The study of how matter interacts with electromagnetic radiation to reveal structure and concentration.',130,44]);
+N.forEach((d,i)=>{n+='<g class="nd" data-i="'+i+'" transform="translate('+(d[0]-d[5]/2)+' '+(d[1]-d[6]/2)+')"><rect width="'+d[5]+'" height="'+d[6]+'" rx="'+d[6]/2+'" fill="'+d[3]+'" fill-opacity=".22" stroke="'+d[3]+'" stroke-width="1.5"/><text x="'+d[5]/2+'" y="'+(d[6]/2+4)+'" text-anchor="middle" style="fill:var(--ink);font-size:12px">'+d[2]+'</text></g>'});
+$('mm').innerHTML=l+'</g>'+n;
+$('mm').onclick=e=>{const g=e.target.closest('.nd');if(!g)return;const d=N[+g.dataset.i];$('mi').style.borderLeft='4px solid '+d[3];$('mi').innerHTML='<h3>'+d[2]+'</h3><p>'+d[4]+'</p>'}}
+
+/* quiz */
+function burst(b){const r=b.getBoundingClientRect();for(let i=0;i<16;i++){const p=document.createElement('span'),a=Math.random()*6.28,d=40+Math.random()*60;p.className='pp';p.style.cssText='left:'+(r.left+r.width/2)+'px;top:'+(r.top+r.height/2)+'px;background:hsl('+Math.random()*360+',85%,60%);--x:'+Math.cos(a)*d+'px;--y:'+Math.sin(a)*d+'px';document.body.appendChild(p);setTimeout(()=>p.remove(),900)}}
+function confetti(k){for(let i=0;i<k;i++){const p=document.createElement('span'),d=2.5+Math.random()*2.5;p.className='cf';p.style.cssText='left:'+Math.random()*100+'vw;background:hsl('+Math.random()*360+',85%,60%);animation-duration:'+d+'s;animation-delay:'+Math.random()*.8+'s';document.body.appendChild(p);setTimeout(()=>p.remove(),5500)}}
+function quiz(){let i=0,s=0;const el=$('qz');
+function r(){if(i>=20)return end();const q=Q[i];el.innerHTML='<div class="bar"><i style="width:'+i*5+'%"></i></div><p class="mute">Question '+(i+1)+' of 20</p><h3>'+q[0]+'</h3>'+q[1].map((o,j)=>'<button class="opt" data-j="'+j+'">'+o+'</button>').join('')+'<p id="why"></p><button class="btn" id="nx" hidden style="--c:#8b5cf6">'+(i<19?'Next question':'See my result')+'</button>';
+el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const ok=+b.dataset.j==q[2];el.querySelectorAll('.opt').forEach(o=>{o.disabled=true;if(+o.dataset.j==q[2])o.classList.add('ok')});if(ok){s++;burst(b)}else b.classList.add('no');$('why').textContent=(ok?'Correct. ':'Not quite. ')+q[3];$('nx').hidden=false});
+$('nx').onclick=()=>{i++;r()}}
+function end(){const m=s>=18?['Spectral master','Every colour of the spectrum lit up for you.']:s>=14?['Bright and clear','A strong signal. Review the misses and you are there.']:s>=9?['Peak forming','Good absorption so far. Revisit the Concepts folder.']:['Baseline reading','Everyone starts flat. Open Concepts and try again.'];
+el.innerHTML='<div style="text-align:center"><svg viewBox="0 0 160 160" width="200"><defs><linearGradient id="rg"><stop offset="0" stop-color="#8b5cf6"/><stop offset=".35" stop-color="#14b8a6"/><stop offset=".65" stop-color="#facc15"/><stop offset="1" stop-color="#ef4444"/></linearGradient></defs><circle cx="80" cy="80" r="60" fill="none" stroke-width="12" style="stroke:var(--line)"/><circle id="pr" cx="80" cy="80" r="60" fill="none" stroke="url(#rg)" stroke-width="12" stroke-linecap="round" stroke-dasharray="0 377" transform="rotate(-90 80 80)" style="transition:stroke-dasharray 1.6s ease"/><text x="80" y="90" text-anchor="middle" font-size="34" style="fill:var(--ink)">'+s+'/20</text></svg><h2>'+m[0]+'</h2><p>'+m[1]+'</p><button class="btn" id="rt" style="--c:#f59e0b">Try again</button></div>';
+setTimeout(()=>$('pr').setAttribute('stroke-dasharray',(s/20*377)+' 377'),80);if(s>=14)confetti(s>=18?90:45);$('rt').onclick=quiz}
+r()}
+
+/* AI */
+let mode=0;
+function say(t,u){const d=document.createElement('div');d.className='m'+(u?' u':'');$('log').appendChild(d);if(u){d.textContent=t;return}let i=0;const h=setInterval(()=>{d.textContent=t.slice(0,++i);if(i>=t.length)clearInterval(h)},9)}
+function chips(){$('chips').innerHTML=['What is spectroscopy?','Explain fluorescence','IR vs Raman','Explain MRI','Selection rules','Surface techniques'].map(c=>'<button class="chip">'+c+'</button>').join('')}
+function ask(q){say(q,1);const l=q.toLowerCase()+' ';let b=K[K.length-1],s=0;K.forEach(k=>{const n=k[0].filter(w=>l.includes(w)).length;if(n>s){s=n;b=k}});
+if(/ vs | compare|difference/.test(l)&&/ir /.test(l)&&l.includes('raman'))b=K[6];
+setTimeout(()=>say(s?b[1+mode]:'I cover spectroscopy topics only. '+b[1+mode],0),300)}
+$('af').onsubmit=e=>{e.preventDefault();const v=$('ai-in').value.trim();if(v){ask(v);$('ai-in').value=''}};
+$('chips').onclick=e=>{if(e.target.classList.contains('chip'))ask(e.target.textContent)};
+document.querySelectorAll('.md').forEach(b=>b.onclick=()=>{mode=+b.dataset.m;document.querySelectorAll('.md').forEach(x=>x.classList.toggle('on',x==b))});
+try{(JSON.parse(localStorage.getItem('sp-bk'))||[]).forEach(k=>{const r=document.querySelector('[data-bk="'+k+'"]');if(r){r.classList.add('on');r.setAttribute('aria-pressed','true')}})}catch(e){}
+
+/* ---- v4 additions ---- */
+const PAL=['#8b5cf6','#3b82f6','#14b8a6','#22c55e','#facc15','#f97316','#ef4444','#ec4899'];
+function hl(rows){return '<div class="hl">'+rows.map((r,i)=>'<div class="hr" tabindex="0" style="--c:'+PAL[i%8]+'"><span class="hn">'+String(i+1).padStart(2,'0')+'</span><b>'+r[0]+'</b><em>'+r[1]+'</em><p>'+r[2]+'</p></div>').join('')+'</div>'}
+const SY=[['Principles of spectroscopy and selection rules','About · Selection rules','Photon energy, energy levels, Beer–Lambert law and which transitions are allowed. Tap to open.','about'],
+['Electronic spectroscopy of fluorescence and its applications in medicine','Types · Fluorescence','Absorption, Stokes shift and quantum yield; assays, angiography and tumour imaging. Tap to open.','t0'],
+['Vibrational and rotational spectroscopy of diatomic molecules','Types · Vibrational, Rotational','Harmonic and anharmonic oscillator, rigid rotor, P and R branches, bond length. Tap to open.','t1'],
+['Nuclear magnetic resonance imaging and surface characterization','Types · MRI, Surface analysis','Larmor frequency, T₁ and T₂ contrast; XPS, SEM, AFM and BET. Tap to open.','t3']];
+$('syl').innerHTML='<h3>Unit II · 9 Hrs</h3><p class="mute">Spectroscopic techniques and applications. Hover a topic, tap to jump to it.</p><div class="hl">'+SY.map((r,i)=>'<div class="hr" tabindex="0" data-k="'+r[3]+'" style="--c:'+PAL[[0,1,5,7][i]]+'"><span class="hn">'+String(i+1).padStart(2,'0')+'</span><b>'+r[0]+'</b><em>'+r[1]+'</em><p>'+r[2]+'</p></div>').join('')+'</div>';
+document.addEventListener('click',e=>{const h=e.target.closest('.hr');if(!h)return;const k=h.dataset.k;if(k){if(k=='about')sub('about');else{sub('types');ring(+k.slice(1))}}else h.classList.toggle('open')});
+document.addEventListener('keydown',e=>{if((e.key=='Enter'||e.key==' ')&&e.target.classList&&e.target.classList.contains('hr')){e.preventDefault();e.target.click()}});
+addEventListener('pointermove',e=>{const b=$('gl').getBoundingClientRect();window._mx=e.clientX-b.left;window._my=e.clientY-b.top;window._nx=e.clientX/innerWidth-.5;window._ny=e.clientY/innerHeight-.5});
+function globe(cv){const x=cv.getContext('2d'),rm=matchMedia('(prefers-reduced-motion:reduce)').matches,k0=cv._k=Symbol(),N=1100,Pt=[],ga=Math.PI*(3-Math.sqrt(5));
+for(let i=0;i<N;i++){const y=1-2*(i+.5)/N,r=Math.sqrt(1-y*y),a=i*ga;Pt.push([Math.cos(a)*r,y,Math.sin(a)*r,270*(1-(y+1)/2)])}
+let ry=0,ox=0,oy=0;
+(function f(){if(cv._k!==k0||!cv.isConnected)return;const w=cv.width=cv.clientWidth,h=cv.height=cv.clientHeight;x.clearRect(0,0,w,h);
+if(cv.offsetParent){const R=Math.min(w*.42,h*.34),cx=w/2,cy=h*.42,mx=window._mx==null?-999:window._mx,my=window._my==null?-999:window._my;
+ox+=((window._nx||0)-ox)*.04;oy+=((window._ny||0)-oy)*.04;ry+=rm?0:.004;
+const a=ry+ox*1.8,b=.25+oy*.9,ca=Math.cos(a),sa=Math.sin(a),cb=Math.cos(b),sb=Math.sin(b);
+for(const p of Pt){const x1=p[0]*ca+p[2]*sa,z1=-p[0]*sa+p[2]*ca,y1=p[1]*cb-z1*sb,z2=p[1]*sb+z1*cb,f2=1+z2*.22;let px=cx+x1*R*f2,py=cy+y1*R*f2;
+const dx=px-mx,dy=py-my,d=Math.hypot(dx,dy);if(d<130&&d>0){const k=(130-d)/130;px+=dx/d*k*44;py+=dy/d*k*44}
+const t=(z2+1)/2;x.fillStyle='hsla('+((p[3]+ry*25)%360)+',92%,'+(58+t*8)+'%,'+(.18+.82*t)+')';x.beginPath();x.arc(px,py,.8+1.9*t,0,6.283);x.fill()}}
+if(!rm)requestAnimationFrame(f)})()}
+chips();show('home');
+</script></body></html>
